@@ -1,7 +1,6 @@
 # Laravel CI/CD dengan Deployer dan Github Action [Bahasa Indonesia]
 
 ## Daftar Isi
-- [Laravel](#laravel)
   - [Daftar Isi](#daftar-isi)
   - [Resources](#resources)
   - [Copyright](#copyright)
