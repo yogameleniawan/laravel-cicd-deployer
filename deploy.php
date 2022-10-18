@@ -3,7 +3,6 @@ namespace Deployer;
 
 require 'recipe/laravel.php';
 require 'contrib/npm.php';
-require 'contrib/rsync.php';
 require 'recipe/deploy/writable.php';
 require "deploy_tasks/index.php";
 
@@ -63,7 +62,6 @@ task('deploy:build', [
 
 task('deploy', [
     'deploy:prepare',
-    'rsync',                // Deploy code & built assets
     'deploy:secrets',       // Deploy secrets
     'deploy:release',
     'deploy:update_code',
