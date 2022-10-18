@@ -215,12 +215,12 @@ Kita membutuhkan 3 variabel yaitu :
    - Jika muncul tulisan "Enter a file in which to save the key," press Enter. Tekan enter saja sampai selesai.
    - Kemudian jalankan perintah dibawah ini :
   ```
-  cat ~/.ssh/id_rsa
+  cat ~/.ssh/id_ed25519
   ```
-  ![image](https://user-images.githubusercontent.com/64576201/196353893-a28f0311-0682-4cb2-99fe-01fe54ea0aca.png)
+  ![image](https://user-images.githubusercontent.com/64576201/196358242-6484c1ff-9bcb-41ef-a057-7f31457d0bb9.png)
 
     - Lalu copy semua kemudian tambahkan pada github secrets SSH_PRIVATE_KEY
-  ![image](https://user-images.githubusercontent.com/64576201/196354089-41883ca7-5b14-428d-b0d6-af01052d18d3.png)
+  ![image](https://user-images.githubusercontent.com/64576201/196358495-3f281114-592f-4a8a-8b66-8d26dea06bdd.png)
 
 
 9. Untuk mendapatkan SSH_KNOWN_HOSTS dapat dilakukan dengan cara sebagai berikut :
