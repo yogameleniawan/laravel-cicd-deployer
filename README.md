@@ -234,7 +234,8 @@ Kita membutuhkan 3 variabel yaitu :
     ![image](https://user-images.githubusercontent.com/64576201/196354836-6027cd08-3245-45f1-a7bb-09090948d1b0.png)
 
 11. Silahkan melakukan perubahan pada repository anda maka Github Actions dan Deployer akan berjalan sebagaimana mestinya.
-
+   ![image](https://user-images.githubusercontent.com/64576201/196372720-3b9d30f9-6381-4f6d-a449-7cc2546dfef9.png)
+   ![image](https://user-images.githubusercontent.com/64576201/196372842-718f49be-8a04-423c-878e-ce301a59939d.png)
 
 ## Resources
 - Laravel [Laravel](https://laravel.com/docs/9.x/installation)
