@@ -42,7 +42,7 @@ host('DeployServer')
 ->set('remote_user', 'u1318812')
 ->set('port', 65002)
 ->set('branch', 'master')
-->set('deploy_path', '~/public_html/api-deploy');
+->set('deploy_path', '~/public_html/deploy');
 
 // Tasks
 
