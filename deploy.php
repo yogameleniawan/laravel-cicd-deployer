@@ -5,16 +5,21 @@ require 'recipe/laravel.php';
 require 'contrib/npm.php';
 require 'contrib/rsync.php';
 require 'recipe/deploy/writable.php';
+require "deploy_tasks/index.php";
 
 set('bin/php', function () {
     return '/usr/local/bin/php'; // change
 });
 
-set('application', 'Laravel CI/CD Deployer Github Workflow');
-set('repository', 'https://github.com/yogameleniawan/laravel-cicd-deployer.git');
+set('application', 'Laravel CICD');
+set('repository', 'git@github.com:yogameleniawan/laravel-cicd-deployer.git'); // Git Repository
 
+// [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', true);
 set('git_ssh_command', 'ssh -o StrictHostKeyChecking=no');
+// use this config, if you deploy on windows
+// set('git_tty', false);
+// set('ssh_multiplexing', false);
 
 set('keep_releases', 5);
 
@@ -37,9 +42,9 @@ set('composer_options', '--verbose --prefer-dist --no-progress --no-interaction 
 
 // Hosts
 
-host('DeployServer')
-->setHostname('151.106.119.33')
-->set('remote_user', 'u1318812')
+host('DeployServer') // Name of the server
+->setHostname('151.106.119.33') // Hostname or IP address
+->set('remote_user', 'u1318812') // SSH user
 ->set('port', 65002)
 ->set('branch', 'master')
 ->set('deploy_path', '~/public_html/deploy');
@@ -73,6 +78,6 @@ task('deploy', [
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
 
-// Migrate database before symlink new release. Uncomment below code if you want to migrate after deploy
+// Migrate database before symlink new release.
 
-before('deploy:symlink', 'artisan:migrate');
+// before('deploy:symlink', 'artisan:migrate');
