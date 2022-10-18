@@ -129,7 +129,7 @@ jobs:
       - name: NPM Build
         run: |
           npm install
-          npm run prod
+          npm run build
       - name: Put built assets in Artifacts
         uses: actions/upload-artifact@v1
         with:
