@@ -63,6 +63,7 @@ task('deploy:build', [
 
 task('deploy', [
     'deploy:prepare',
+    'rsync',                // Deploy code & built assets
     'deploy:secrets',       // Deploy secrets
     'deploy:release',
     'deploy:update_code',
