@@ -186,11 +186,11 @@ https://github.com/USERNAME/REPOSITORY/settings/secrets/actions/new
 ```
 Kita membutuhkan 3 variabel yaitu : 
 
-${{ secrets.SSH_PRIVATE_KEY }}
+  - ${{ secrets.SSH_PRIVATE_KEY }}
 
-${{ secrets.SSH_KNOWN_HOSTS }}
+  - ${{ secrets.SSH_KNOWN_HOSTS }}
 
-${{ secrets.DOT_ENV_PRODUCTION }}
+  - ${{ secrets.DOT_ENV_PRODUCTION }}
 
 3 Variabel ini dibutuhkan pada file master.yml untuk melakukan proses setup deployer dan deploy ke dalam server
 
@@ -206,25 +206,28 @@ ${{ secrets.DOT_ENV_PRODUCTION }}
         run: php vendor/bin/dep deploy NAMA_REMOTE_HOST branch=master
 ```
 
+
 8. Untuk mendapatkan SSH_PRIVATE_KEY dapat dilakukan cara sebagai berikut :
-  - Buka terminal server anda kemudian jalankan perintah dibawah ini :
+   - Buka terminal server anda kemudian jalankan perintah dibawah ini :
     ```
     ssh-keygen -t ed25519 -C "your_email@example.com"
     ```
-  - Jika muncul tulisan "Enter a file in which to save the key," press Enter. Tekan enter saja sampai selesai.
-  - Kemudian jalankan perintah dibawah ini :
+   - Jika muncul tulisan "Enter a file in which to save the key," press Enter. Tekan enter saja sampai selesai.
+   - Kemudian jalankan perintah dibawah ini :
   ```
   cat ~/.ssh/id_rsa
   ```
-  - Lalu copy semua kemudian tambahkan pada github secrets SSH_PRIVATE_KEY
+    - Lalu copy semua kemudian tambahkan pada github secrets SSH_PRIVATE_KEY
   
+
+
 9. Untuk mendapatkan SSH_KNOWN_HOSTS dapat dilakukan dengan cara sebagai berikut :
-  - Buka terminal server anda kemudian jalankan perintah dibawah ini :
+   - Buka terminal server anda kemudian jalankan perintah dibawah ini :
     ```
     ssh-keyscan -p 65002 IP_SERVER_ANDA
     ```
     IP_SERVER_ANDA ubah sesuai dengan ip server yang anda miliki
-  - Lalu copy semua kemudian tambahkan pada github secrets SSH_KNOWN_HOSTS
+   - Lalu copy semua kemudian tambahkan pada github secrets SSH_KNOWN_HOSTS
   
 10. Untuk mengisi github secrets DOT_ENV_PRODUCTION anda dapat meng-copy semua isi .env pada projek laravel anda.
 
