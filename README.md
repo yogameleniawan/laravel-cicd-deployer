@@ -167,18 +167,69 @@ jobs:
 ```
 
 Perlu ditekankan : 
-Perintah ini merupakan proses untuk mengeksekusi deployer.php yang dilakukan oleh github action, NAMA_REMOTE HOST sesuaikan dengan konfigurasi deployer anda.
+Perintah dibawah ini merupakan proses untuk mengeksekusi deployer.php yang dilakukan oleh github action, NAMA_REMOTE HOST sesuaikan dengan konfigurasi deployer anda. NAMA_REMOTE_HOST diisikan bebas sesuai keinginan anda jika anda memberikan NAMA_REMOTE_HOST contoh ServerHostingku maka NAMA_REMOTE_HOST diubah menjadi ServerHostingku sehingga menjadi sebagai berikut
 ```
-run: php vendor/bin/dep deploy NAMA_REMOTE_HOST branch=master
+run: php vendor/bin/dep deploy ServerHostingku branch=master
 ```
 ```
-host('NAMA_REMOTE_HOST') // Nama remote host server ssh anda | contoh host('NAMA_REMOTE_HOST')
+host('ServerHostingku')
 ->setHostname('NAMA_HOSTNAME_ATAU_IP') // Hostname atau IP address server anda | contoh  ->setHostname('10.10.10.1') 
 ->set('remote_user', 'USER_SSH') // SSH user server anda | contoh ->set('remote_user', 'u1234567')
 ->set('port', 65002) // SSH port server anda, untuk kasus ini server yang saya gunakan menggunakan port custom | contoh ->set('remote_user', 65002)
 ->set('branch', 'master') // Git branch anda
 ->set('deploy_path', '~/PATH/SUB_PATH'); // Lokasi untuk menyimpan projek laravel pada server | contoh ->set('deploy_path', '~/public_html/api-deploy');
 ```
+
+7. Menambahkan Credentials ke Github Secrets yang bisa anda akses melalui link
+```
+https://github.com/USERNAME/REPOSITORY/settings/secrets/actions/new
+```
+Kita membutuhkan 3 variabel yaitu : 
+
+${{ secrets.SSH_PRIVATE_KEY }}
+
+${{ secrets.SSH_KNOWN_HOSTS }}
+
+${{ secrets.DOT_ENV_PRODUCTION }}
+
+3 Variabel ini dibutuhkan pada file master.yml untuk melakukan proses setup deployer dan deploy ke dalam server
+
+```
+- name: Setup Deployer
+        uses: atymic/deployer-php-action@master
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+      - name: Deploy to Development
+        env:
+          DOT_ENV: ${{ secrets.DOT_ENV_PRODUCTION }}
+        run: php vendor/bin/dep deploy NAMA_REMOTE_HOST branch=master
+```
+
+8. Untuk mendapatkan SSH_PRIVATE_KEY dapat dilakukan cara sebagai berikut :
+  - Buka terminal server anda kemudian jalankan perintah dibawah ini :
+    ```
+    ssh-keygen -t ed25519 -C "your_email@example.com"
+    ```
+  - Jika muncul tulisan "Enter a file in which to save the key," press Enter. Tekan enter saja sampai selesai.
+  - Kemudian jalankan perintah dibawah ini :
+  ```
+  cat ~/.ssh/id_rsa
+  ```
+  - Lalu copy semua kemudian tambahkan pada github secrets SSH_PRIVATE_KEY
+  
+9. Untuk mendapatkan SSH_KNOWN_HOSTS dapat dilakukan dengan cara sebagai berikut :
+  - Buka terminal server anda kemudian jalankan perintah dibawah ini :
+    ```
+    ssh-keyscan -p 65002 IP_SERVER_ANDA
+    ```
+    IP_SERVER_ANDA ubah sesuai dengan ip server yang anda miliki
+  - Lalu copy semua kemudian tambahkan pada github secrets SSH_KNOWN_HOSTS
+  
+10. Untuk mengisi github secrets DOT_ENV_PRODUCTION anda dapat meng-copy semua isi .env pada projek laravel anda.
+
+11. Silahkan melakukan perubahan pada repository anda maka Github Actions dan Deployer akan berjalan sebagaimana mestinya.
+
 
 ## Resources
 - Laravel [Laravel](https://laravel.com/docs/9.x/installation)
