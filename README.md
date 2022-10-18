@@ -26,8 +26,6 @@ namespace Deployer;
 
 require 'recipe/laravel.php';
 require 'contrib/npm.php';
-require 'contrib/rsync.php';
-require 'recipe/deploy/writable.php';
 
 set('bin/php', function () {
     return '/usr/local/bin/php'; // change
@@ -87,10 +85,7 @@ task('deploy:build', [
 
 task('deploy', [
     'deploy:prepare',
-    'rsync',                // Deploy code & built assets
     'deploy:secrets',       // Deploy secrets
-    'deploy:release',
-    'deploy:update_code',
     'deploy:vendors',
     'deploy:shared',
     'artisan:storage:link',
