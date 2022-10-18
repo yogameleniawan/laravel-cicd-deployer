@@ -28,7 +28,6 @@ require 'recipe/laravel.php';
 require 'contrib/npm.php';
 require 'contrib/rsync.php';
 require 'recipe/deploy/writable.php';
-require "deploy_tasks/index.php";
 
 set('bin/php', function () {
     return '/usr/local/bin/php'; // change
@@ -57,7 +56,6 @@ add('writable_dirs', [
     "storage/app",
     "storage/framework",
     "storage/logs",
-    "storage/tntsearch",
 ]);
 
 set('composer_options', '--verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader');
