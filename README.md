@@ -217,8 +217,10 @@ Kita membutuhkan 3 variabel yaitu :
   ```
   cat ~/.ssh/id_rsa
   ```
+  ![image](https://user-images.githubusercontent.com/64576201/196353893-a28f0311-0682-4cb2-99fe-01fe54ea0aca.png)
+
     - Lalu copy semua kemudian tambahkan pada github secrets SSH_PRIVATE_KEY
-  
+  ![image](https://user-images.githubusercontent.com/64576201/196354089-41883ca7-5b14-428d-b0d6-af01052d18d3.png)
 
 
 9. Untuk mendapatkan SSH_KNOWN_HOSTS dapat dilakukan dengan cara sebagai berikut :
@@ -227,9 +229,14 @@ Kita membutuhkan 3 variabel yaitu :
     ssh-keyscan -p 65002 IP_SERVER_ANDA
     ```
     IP_SERVER_ANDA ubah sesuai dengan ip server yang anda miliki
+  ![image](https://user-images.githubusercontent.com/64576201/196354432-be41502a-a07e-44b4-beb5-1a841e1e1a36.png)
+
    - Lalu copy semua kemudian tambahkan pada github secrets SSH_KNOWN_HOSTS
-  
+  ![image](https://user-images.githubusercontent.com/64576201/196354509-d9cd6f06-e5c2-4f76-89c4-211f9b9471ac.png)
+    
 10. Untuk mengisi github secrets DOT_ENV_PRODUCTION anda dapat meng-copy semua isi .env pada projek laravel anda.
+    ![image](https://user-images.githubusercontent.com/64576201/196354733-cef2ef84-6d0c-4362-866a-8cdad5069a6b.png)
+    ![image](https://user-images.githubusercontent.com/64576201/196354836-6027cd08-3245-45f1-a7bb-09090948d1b0.png)
 
 11. Silahkan melakukan perubahan pada repository anda maka Github Actions dan Deployer akan berjalan sebagaimana mestinya.
 
