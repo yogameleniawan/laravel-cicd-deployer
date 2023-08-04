@@ -1,5 +1,8 @@
 # Laravel CI/CD dengan Deployer dan Github Action [Bahasa Indonesia]
 
+![CI CD](https://github.com/yogameleniawan/laravel-cicd-deployer/assets/64576201/de7781c6-1b73-4b5d-a1fb-a0d8ddc6cac9)
+
+
 ## Daftar Isi
   - [Daftar Isi](#daftar-isi)
   - [Tutorial](#tutorial)
