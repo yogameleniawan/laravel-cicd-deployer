@@ -20,7 +20,7 @@ composer require --dev deployer/deployer
 ```
 3. Jalankan Perintah pada terminal kemudian pilih PHP
 ```
-alias dep='vendor/bin/dep'
+vendor/bin/dep init
 ```
 4. Ubah file deployer.php 
 ```
