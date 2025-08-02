@@ -2,9 +2,9 @@
 
 ![CI CD](https://github.com/yogameleniawan/laravel-cicd-deployer/assets/64576201/692d27d8-c6bc-4447-91ae-5ea500757e7f)
 
-### 🧭 Navigasi Cepat
+### 🧭 Quick Navigation
 
--   **Bahasa**: [🇮🇩 Bahasa Indonesia](#-bahasa-indonesia) | [🇬🇧 English](#-english-version)
+-   **Language**: [🇮🇩 Bahasa Indonesia](#-bahasa-indonesia) | [🇬🇧 English](#-english-version)
 
 ---
 
