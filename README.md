@@ -1,10 +1,10 @@
-# Laravel CI/CD with Deployer and GitHub Actions
+# Laravel CI/CD dengan Deployer dan Github Action
 
 ![CI CD](https://github.com/yogameleniawan/laravel-cicd-deployer/assets/64576201/692d27d8-c6bc-4447-91ae-5ea500757e7f)
 
-### 🧭 Quick Navigation
+### 🧭 Navigasi Cepat
 
--   **Language**: [🇮🇩 Bahasa Indonesia](#-bahasa-indonesia) | [🇬🇧 English](#-english-version)
+-   **Bahasa**: [🇮🇩 Bahasa Indonesia](#-bahasa-indonesia) | [🇬🇧 English](#-english-version)
 
 ---
 
@@ -13,8 +13,8 @@
 ### Daftar Isi
 
 -   [Tutorial](#tutorial-indonesia)
--   [Sumber Daya](#sumber-daya)
--   [Hak Cipta](#hak-cipta)
+-   [Sumber Daya](#sumber-daya--resources)
+-   [Hak Cipta](#hak-cipta--copyright)
 
 ### Tutorial (Indonesia)
 
@@ -138,7 +138,7 @@
     Salin seluruh output (termasuk `-----BEGIN...` dan `-----END...`) ke dalam secret `SSH_PRIVATE_KEY`.
 
 9.  **Cara Mendapatkan `SSH_KNOWN_HOSTS`**
-    Di terminal **lokal Anda (atau di dalam GitHub Action)**, jalankan:
+    Di terminal **lokal Anda**, jalankan:
     ```bash
     ssh-keyscan -p [PORT_SSH_ANDA] [IP_SERVER_ANDA]
     ```
@@ -149,13 +149,13 @@
 
 ---
 
-## 🇬🇧 English
+## 🇬🇧 English Version
 
 ### Table of Contents
 
 -   [Tutorial](#tutorial-english)
--   [Resources](#resources)
--   [Copyright](#copyright)
+-   [Resources](#sumber-daya--resources)
+-   [Copyright](#hak-cipta--copyright)
 
 ### Tutorial (English)
 
@@ -279,7 +279,7 @@
     Copy the entire output (including `-----BEGIN...` and `-----END...`) into the `SSH_PRIVATE_KEY` secret.
 
 9.  **How to Get `SSH_KNOWN_HOSTS`**
-    In your **local terminal (or inside a GitHub Action)**, run:
+    In your **local terminal**, run:
     ```bash
     ssh-keyscan -p [YOUR_SSH_PORT] [YOUR_SERVER_IP]
     ```
