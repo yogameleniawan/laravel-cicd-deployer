@@ -1,248 +1,300 @@
-# Laravel CI/CD dengan Deployer dan Github Action [Bahasa Indonesia]
+# Laravel CI/CD with Deployer and GitHub Actions
 
 ![CI CD](https://github.com/yogameleniawan/laravel-cicd-deployer/assets/64576201/692d27d8-c6bc-4447-91ae-5ea500757e7f)
 
+### 🧭 Quick Navigation
 
-## Daftar Isi
-  - [Daftar Isi](#daftar-isi)
-  - [Tutorial](#tutorial)
-  - [Resources](#resources)
-  - [Copyright](#copyright)
+-   **Language**: [🇮🇩 Bahasa Indonesia](#-bahasa-indonesia) | [🇬🇧 English](#-english-version)
 
-## Tutorial
-1. Install Laravel
-```
-composer create-project laravel/laravel example-app
-```
-2. Install Deployer
-```
-composer require --dev deployer/deployer
-```
-3. Jalankan Perintah pada terminal kemudian pilih PHP
-```
-vendor/bin/dep init
-```
-4. Ubah file deployer.php 
-```
-<?php
-namespace Deployer;
+---
 
-require 'recipe/laravel.php';
-require 'contrib/npm.php';
+## 🇮🇩 Bahasa Indonesia
 
-set('bin/php', function () {
-    return '/usr/local/bin/php'; // change
-});
+### Daftar Isi
 
-// HARUS DIGANTI SESUAI KEBUTUHAN ANDA
-set('application', 'Nama Aplikasi'); 
-set('repository', 'SSH_GIT_CLONE'); // Git Repository contoh set('repository', 'git@github.com:yogameleniawan/laravel-cicd-deployer.git');
-// HARUS DIGANTI SESUAI KEBUTUHAN ANDA
+-   [Tutorial](#tutorial-indonesia)
+-   [Sumber Daya](#sumber-daya)
+-   [Hak Cipta](#hak-cipta)
 
-set('git_tty', true);
-set('git_ssh_command', 'ssh -o StrictHostKeyChecking=no');
+### Tutorial (Indonesia)
 
-set('keep_releases', 5);
-
-set('writable_mode', 'chmod'); // shared hosting
-
-// Shared files/dirs between deploys
-add('shared_files', ['.env']);
-add('shared_dirs', ['storage']);
-
-// Writable dirs by web server
-add('writable_dirs', [
-    "bootstrap/cache",
-    "storage",
-    "storage/app",
-    "storage/framework",
-    "storage/logs",
-]);
-
-set('composer_options', '--verbose --prefer-dist --no-progress --no-interaction --no-dev --optimize-autoloader');
-
-// Hosts
-
-// HARUS DIGANTI SESUAI KEBUTUHAN ANDA
-
-host('NAMA_REMOTE_HOST') // Nama remote host server ssh anda | contoh host('NAMA_REMOTE_HOST')
-->setHostname('NAMA_HOSTNAME_ATAU_IP') // Hostname atau IP address server anda | contoh  ->setHostname('10.10.10.1') 
-->set('remote_user', 'USER_SSH') // SSH user server anda | contoh ->set('remote_user', 'u1234567')
-->set('port', 65002) // SSH port server anda, untuk kasus ini server yang saya gunakan menggunakan port custom | contoh ->set('remote_user', 65002)
-->set('branch', 'master') // Git branch anda
-->set('deploy_path', '~/PATH/SUB_PATH'); // Lokasi untuk menyimpan projek laravel pada server | contoh ->set('deploy_path', '~/public_html/api-deploy');
-
-// HARUS DIGANTI SESUAI KEBUTUHAN ANDA
-
-// Tasks
-
-task('deploy:secrets', function () {
-    file_put_contents(__DIR__ . '/.env', getenv('DOT_ENV'));
-    upload('.env', get('deploy_path') . '/shared');
-});
-
-desc('Build assets');
-task('deploy:build', [
-    'npm:install',
-]);
-
-task('deploy', [
-    'deploy:prepare',
-    'deploy:secrets',       // Deploy secrets
-    'deploy:vendors',
-    'deploy:shared',
-    'artisan:storage:link',
-    'artisan:queue:restart',
-    'deploy:publish',
-    'deploy:unlock',
-]);
-
-// [Optional] if deploy fails automatically unlock.
-after('deploy:failed', 'deploy:unlock');
-
-// Migrate database before symlink new release. Uncomment below code if you want to migrate after deploy
-
-// before('deploy:symlink', 'artisan:migrate');
-```
-
-5. Membuat Github Workflow dengan menjalankan pada perintah sebagai berikut :
-```
-touch .github/workflows/master.yml
-```
-
-6. Silahkan ubah file master.yml dengan kode berikut : 
-```
-on:
-  push:
-    branches:
-      - master
-
-jobs:
-  build-js-production:
-    name: Build JavaScript/CSS for Production Server
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: NPM Build
-        run: |
-          npm install
-          npm run build
-      - name: Put built assets in Artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: assets
-          path: public
-          retention-days: 3
-  deploy-production:
-    name: Deploy Project to Production Server
-    runs-on: ubuntu-latest
-    needs: [ build-js-production ]
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - uses: actions/checkout@v1
-      - name: Fetch built assets from Artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: assets
-          path: public
-      - name: Setup PHP
-        uses: shivammathur/setup-php@master
-        with:
-          php-version: '8.0'
-          extension-csv: mbstring, bcmath
-      - name: Composer install
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-      - name: Setup Deployer
-        uses: atymic/deployer-php-action@master
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-      - name: Deploy to Development
-        env:
-          DOT_ENV: ${{ secrets.DOT_ENV_PRODUCTION }}
-        run: php vendor/bin/dep deploy NAMA_REMOTE_HOST branch=master
-```
-
-Perlu ditekankan : 
-Perintah dibawah ini merupakan proses untuk mengeksekusi deployer.php yang dilakukan oleh github action, NAMA_REMOTE HOST sesuaikan dengan konfigurasi deployer anda. NAMA_REMOTE_HOST diisikan bebas sesuai keinginan anda jika anda memberikan NAMA_REMOTE_HOST contoh ServerHostingku maka NAMA_REMOTE_HOST diubah menjadi ServerHostingku sehingga menjadi sebagai berikut
-```
-run: php vendor/bin/dep deploy ServerHostingku branch=master
-```
-```
-host('ServerHostingku')
-->setHostname('NAMA_HOSTNAME_ATAU_IP') // Hostname atau IP address server anda | contoh  ->setHostname('10.10.10.1') 
-->set('remote_user', 'USER_SSH') // SSH user server anda | contoh ->set('remote_user', 'u1234567')
-->set('port', 65002) // SSH port server anda, untuk kasus ini server yang saya gunakan menggunakan port custom | contoh ->set('remote_user', 65002)
-->set('branch', 'master') // Git branch anda
-->set('deploy_path', '~/PATH/SUB_PATH'); // Lokasi untuk menyimpan projek laravel pada server | contoh ->set('deploy_path', '~/public_html/api-deploy');
-```
-
-7. Menambahkan Credentials ke Github Secrets yang bisa anda akses melalui link
-```
-https://github.com/USERNAME/REPOSITORY/settings/secrets/actions/new
-```
-Kita membutuhkan 3 variabel yaitu : 
-
-  - ${{ secrets.SSH_PRIVATE_KEY }}
-
-  - ${{ secrets.SSH_KNOWN_HOSTS }}
-
-  - ${{ secrets.DOT_ENV_PRODUCTION }}
-
-3 Variabel ini dibutuhkan pada file master.yml untuk melakukan proses setup deployer dan deploy ke dalam server
-
-```
-- name: Setup Deployer
-        uses: atymic/deployer-php-action@master
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-      - name: Deploy to Development
-        env:
-          DOT_ENV: ${{ secrets.DOT_ENV_PRODUCTION }}
-        run: php vendor/bin/dep deploy NAMA_REMOTE_HOST branch=master
-```
-
-
-8. Untuk mendapatkan SSH_PRIVATE_KEY dapat dilakukan cara sebagai berikut :
-   - Buka terminal server anda kemudian jalankan perintah dibawah ini :
+1.  **Install Laravel**
+    ```bash
+    composer create-project laravel/laravel example-app
     ```
-    ssh-keygen -t ed25519 -C "your_email@example.com"
+
+2.  **Install Deployer**
+    ```bash
+    composer require --dev deployer/deployer
     ```
-   - Jika muncul tulisan "Enter a file in which to save the key," press Enter. Tekan enter saja sampai selesai.
-   - Kemudian jalankan perintah dibawah ini :
-  ```
-  cat ~/.ssh/id_ed25519
-  ```
-  ![image](https://user-images.githubusercontent.com/64576201/196358242-6484c1ff-9bcb-41ef-a057-7f31457d0bb9.png)
 
-    - Lalu copy semua kemudian tambahkan pada github secrets SSH_PRIVATE_KEY
-  ![image](https://user-images.githubusercontent.com/64576201/196358495-3f281114-592f-4a8a-8b66-8d26dea06bdd.png)
-
-
-9. Untuk mendapatkan SSH_KNOWN_HOSTS dapat dilakukan dengan cara sebagai berikut :
-   - Buka terminal server anda kemudian jalankan perintah dibawah ini :
+3.  **Inisialisasi Deployer**
+    Jalankan perintah berikut dan pilih **PHP** saat diminta.
+    ```bash
+    vendor/bin/dep init
     ```
-    ssh-keyscan -p 65002 IP_SERVER_ANDA
-    ```
-    IP_SERVER_ANDA ubah sesuai dengan ip server yang anda miliki
-  ![image](https://user-images.githubusercontent.com/64576201/196354432-be41502a-a07e-44b4-beb5-1a841e1e1a36.png)
 
-   - Lalu copy semua kemudian tambahkan pada github secrets SSH_KNOWN_HOSTS
-  ![image](https://user-images.githubusercontent.com/64576201/196354509-d9cd6f06-e5c2-4f76-89c4-211f9b9471ac.png)
+4.  **Ubah file `deploy.php`**
+    Sesuaikan file `deploy.php` dengan konfigurasi server Anda.
+    ```php
+    <?php
+    namespace Deployer;
+
+    require 'recipe/laravel.php';
+    require 'contrib/npm.php';
+
+    // HARUS DIGANTI SESUAI KEBUTUHAN ANDA
+    set('application', 'Nama Aplikasi Anda');
+    set('repository', 'git@github.com:user/repo.git'); // URL SSH untuk clone Git
+    set('bin/php', '/usr/bin/php8.2'); // Sesuaikan path PHP di server Anda
+    // HARUS DIGANTI SESUAI KEBUTUHAN ANDA
+
+    set('keep_releases', 5);
+    add('shared_files', ['.env']);
+    add('shared_dirs', ['storage']);
+    add('writable_dirs', ['bootstrap/cache', 'storage']);
+
+    // ----- Hosts -----
+    // HARUS DIGANTI SESUAI KEBUTUHAN ANDA
+    host('NAMA_REMOTE_ANDA') // Nama alias untuk server Anda (cth: production)
+        ->setHostname('IP_SERVER_ANDA') // Hostname atau IP server
+        ->set('remote_user', 'USER_SSH_ANDA') // User SSH di server
+        ->set('port', 22) // Port SSH (default: 22)
+        ->set('branch', 'master') // Branch Git yang akan di-deploy
+        ->set('deploy_path', '~/public_html/nama-proyek'); // Path deploy di server
+    // HARUS DIGANTI SESUAI KEBUTUHAN ANDA
+
+    // ----- Tasks -----
+    task('deploy:secrets', function () {
+        file_put_contents(__DIR__ . '/.env', getenv('DOT_ENV'));
+        upload('.env', get('deploy_path') . '/shared');
+    });
+
+    task('deploy', [
+        'deploy:prepare',
+        'deploy:secrets',
+        'deploy:vendors',
+        'deploy:shared',
+        'artisan:storage:link',
+        'deploy:publish',
+    ]);
+
+    after('deploy:failed', 'deploy:unlock');
+    // before('deploy:symlink', 'artisan:migrate');
+    ```
+
+5.  **Buat File GitHub Workflow**
+    ```bash
+    mkdir -p .github/workflows
+    touch .github/workflows/main.yml
+    ```
+
+6.  **Isi file `main.yml`**
+    ```yaml
+    name: Deploy to Production
+    on:
+      push:
+        branches:
+          - master # Atau branch utama Anda
+
+    jobs:
+      deploy:
+        name: Deploy to Server
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v3
+          - name: Setup PHP
+            uses: shivammathur/setup-php@v2
+            with:
+              php-version: '8.2'
+          - name: Install Composer Dependencies
+            run: composer install --prefer-dist --no-progress --no-dev
+          - name: Setup Deployer
+            uses: atymic/deployer-php-action@master
+            with:
+              ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+              ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          - name: Deploy
+            env:
+              DOT_ENV: ${{ secrets.DOT_ENV_PRODUCTION }}
+            run: php vendor/bin/dep deploy NAMA_REMOTE_ANDA # Sesuaikan dengan nama host di deploy.php
+    ```
+
+7.  **Tambahkan Credentials ke GitHub Secrets**
+    Akses `Settings > Secrets and variables > Actions` di repositori Anda dan tambahkan 3 secrets berikut:
+    -   `SSH_PRIVATE_KEY`: Kunci privat SSH untuk mengakses server Anda.
+    -   `SSH_KNOWN_HOSTS`: Sidik jari SSH dari server Anda.
+    -   `DOT_ENV_PRODUCTION`: Seluruh isi file `.env` produksi Anda.
+
+8.  **Cara Mendapatkan `SSH_PRIVATE_KEY`**
+    Di terminal **server Anda**, jalankan:
+    ```bash
+    # Buat kunci baru jika belum ada
+    ssh-keygen -t rsa -b 4096 -C "email-anda@example.com"
     
-10. Untuk mengisi github secrets DOT_ENV_PRODUCTION anda dapat meng-copy semua isi .env pada projek laravel anda.
-    ![image](https://user-images.githubusercontent.com/64576201/196354733-cef2ef84-6d0c-4362-866a-8cdad5069a6b.png)
-    ![image](https://user-images.githubusercontent.com/64576201/196354836-6027cd08-3245-45f1-a7bb-09090948d1b0.png)
+    # Tampilkan kunci privat untuk disalin
+    cat ~/.ssh/id_rsa
+    ```
+    Salin seluruh output (termasuk `-----BEGIN...` dan `-----END...`) ke dalam secret `SSH_PRIVATE_KEY`.
 
-11. Silahkan melakukan perubahan pada repository anda maka Github Actions dan Deployer akan berjalan sebagaimana mestinya.
-   ![image](https://user-images.githubusercontent.com/64576201/196372720-3b9d30f9-6381-4f6d-a449-7cc2546dfef9.png)
-   ![image](https://user-images.githubusercontent.com/64576201/196372842-718f49be-8a04-423c-878e-ce301a59939d.png)
+9.  **Cara Mendapatkan `SSH_KNOWN_HOSTS`**
+    Di terminal **lokal Anda (atau di dalam GitHub Action)**, jalankan:
+    ```bash
+    ssh-keyscan -p [PORT_SSH_ANDA] [IP_SERVER_ANDA]
+    ```
+    Salin outputnya ke dalam secret `SSH_KNOWN_HOSTS`.
 
-## Resources
-- Laravel [Laravel](https://laravel.com/docs/9.x/installation)
-- Deployer [Deployer](https://deployer.org/)
+10. **Selesai!**
+    Sekarang, setiap kali Anda melakukan `push` ke branch `master`, GitHub Actions akan otomatis men-deploy proyek Anda.
 
-## Copyright
-2022 [Yoga Meleniawan Pamungkas](https://github.com/yogameleniawan)   
+---
+
+## 🇬🇧 English
+
+### Table of Contents
+
+-   [Tutorial](#tutorial-english)
+-   [Resources](#resources)
+-   [Copyright](#copyright)
+
+### Tutorial (English)
+
+1.  **Install Laravel**
+    ```bash
+    composer create-project laravel/laravel example-app
+    ```
+
+2.  **Install Deployer**
+    ```bash
+    composer require --dev deployer/deployer
+    ```
+
+3.  **Initialize Deployer**
+    Run the following command and select **PHP** when prompted.
+    ```bash
+    vendor/bin/dep init
+    ```
+
+4.  **Modify the `deploy.php` file**
+    Adjust the `deploy.php` file with your server's configuration.
+    ```php
+    <?php
+    namespace Deployer;
+
+    require 'recipe/laravel.php';
+    require 'contrib/npm.php';
+
+    // MUST BE REPLACED WITH YOUR DETAILS
+    set('application', 'Your Application Name');
+    set('repository', 'git@github.com:user/repo.git'); // SSH URL to clone your Git repo
+    set('bin/php', '/usr/bin/php8.2'); // Adjust the PHP path on your server
+    // MUST BE REPLACED WITH YOUR DETAILS
+
+    set('keep_releases', 5);
+    add('shared_files', ['.env']);
+    add('shared_dirs', ['storage']);
+    add('writable_dirs', ['bootstrap/cache', 'storage']);
+
+    // ----- Hosts -----
+    // MUST BE REPLACED WITH YOUR DETAILS
+    host('YOUR_REMOTE_NAME') // An alias for your server (e.g., production)
+        ->setHostname('YOUR_SERVER_IP') // Server hostname or IP address
+        ->set('remote_user', 'YOUR_SSH_USER') // SSH user on the server
+        ->set('port', 22) // SSH port (default: 22)
+        ->set('branch', 'master') // Git branch to deploy
+        ->set('deploy_path', '~/public_html/project-name'); // Deployment path on the server
+    // MUST BE REPLACED WITH YOUR DETAILS
+
+    // ----- Tasks -----
+    task('deploy:secrets', function () {
+        file_put_contents(__DIR__ . '/.env', getenv('DOT_ENV'));
+        upload('.env', get('deploy_path') . '/shared');
+    });
+
+    task('deploy', [
+        'deploy:prepare',
+        'deploy:secrets',
+        'deploy:vendors',
+        'deploy:shared',
+        'artisan:storage:link',
+        'deploy:publish',
+    ]);
+
+    after('deploy:failed', 'deploy:unlock');
+    // before('deploy:symlink', 'artisan:migrate');
+    ```
+
+5.  **Create the GitHub Workflow File**
+    ```bash
+    mkdir -p .github/workflows
+    touch .github/workflows/main.yml
+    ```
+
+6.  **Fill the `main.yml` file**
+    ```yaml
+    name: Deploy to Production
+    on:
+      push:
+        branches:
+          - master # Or your main branch
+
+    jobs:
+      deploy:
+        name: Deploy to Server
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v3
+          - name: Setup PHP
+            uses: shivammathur/setup-php@v2
+            with:
+              php-version: '8.2'
+          - name: Install Composer Dependencies
+            run: composer install --prefer-dist --no-progress --no-dev
+          - name: Setup Deployer
+            uses: atymic/deployer-php-action@master
+            with:
+              ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+              ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          - name: Deploy
+            env:
+              DOT_ENV: ${{ secrets.DOT_ENV_PRODUCTION }}
+            run: php vendor/bin/dep deploy YOUR_REMOTE_NAME # Must match the host name in deploy.php
+    ```
+
+7.  **Add Credentials to GitHub Secrets**
+    Go to `Settings > Secrets and variables > Actions` in your repository and add the following 3 secrets:
+    -   `SSH_PRIVATE_KEY`: The private SSH key to access your server.
+    -   `SSH_KNOWN_HOSTS`: The SSH fingerprint of your server.
+    -   `DOT_ENV_PRODUCTION`: The entire content of your production `.env` file.
+
+8.  **How to Get `SSH_PRIVATE_KEY`**
+    In your **server's terminal**, run:
+    ```bash
+    # Create a new key if you don't have one
+    ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
+    
+    # Display the private key to copy it
+    cat ~/.ssh/id_rsa
+    ```
+    Copy the entire output (including `-----BEGIN...` and `-----END...`) into the `SSH_PRIVATE_KEY` secret.
+
+9.  **How to Get `SSH_KNOWN_HOSTS`**
+    In your **local terminal (or inside a GitHub Action)**, run:
+    ```bash
+    ssh-keyscan -p [YOUR_SSH_PORT] [YOUR_SERVER_IP]
+    ```
+    Copy the output into the `SSH_KNOWN_HOSTS` secret.
+
+10. **Done!**
+    Now, every time you `push` to the `master` branch, GitHub Actions will automatically deploy your project.
+
+---
+
+### Sumber Daya / Resources
+
+-   [Laravel](https://laravel.com/docs/9.x/installation)
+-   [Deployer](https://deployer.org/)
+
+### Hak Cipta / Copyright
+
+2022 [Yoga Meleniawan Pamungkas](https://github.com/yogameleniawan)
